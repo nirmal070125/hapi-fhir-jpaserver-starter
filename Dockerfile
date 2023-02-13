@@ -26,7 +26,7 @@ RUN rm -rf /opt/bitnami/tomcat/webapps/ROOT && \
 
 USER root
 RUN mkdir -p /target && chown -R 1001:1001 target
-USER 1001
+USER 10014
 
 COPY --chown=1001:1001 catalina.properties /opt/bitnami/tomcat/conf/catalina.properties
 COPY --chown=1001:1001 server.xml /opt/bitnami/tomcat/conf/server.xml
