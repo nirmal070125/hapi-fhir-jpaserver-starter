@@ -40,7 +40,7 @@ FROM gcr.io/distroless/java17-debian11:nonroot as default
 # 65532 is the nonroot user's uid
 # used here instead of the name to allow Kubernetes to easily detect that the container
 # is running as a non-root (uid != 0) user.
-USER 65532:65532
+USER 10020:10020
 WORKDIR /app
 
 COPY --chown=nonroot:nonroot --from=build-distroless /app /app
