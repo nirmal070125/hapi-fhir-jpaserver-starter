@@ -28,10 +28,10 @@ USER 10020
 RUN mkdir -p /target && chown -R 10020:10020 target
 USER 10014
 
-COPY --chown=1001:1001 catalina.properties /opt/bitnami/tomcat/conf/catalina.properties
-COPY --chown=1001:1001 server.xml /opt/bitnami/tomcat/conf/server.xml
-COPY --from=build-hapi --chown=1001:1001 /tmp/hapi-fhir-jpaserver-starter/target/ROOT.war /opt/bitnami/tomcat/webapps/ROOT.war
-COPY --from=build-hapi --chown=1001:1001 /tmp/hapi-fhir-jpaserver-starter/opentelemetry-javaagent.jar /app
+COPY --chown=10014:10014 catalina.properties /opt/bitnami/tomcat/conf/catalina.properties
+COPY --chown=10014:10014 server.xml /opt/bitnami/tomcat/conf/server.xml
+COPY --from=build-hapi --chown=10014:10014 /tmp/hapi-fhir-jpaserver-starter/target/ROOT.war /opt/bitnami/tomcat/webapps/ROOT.war
+COPY --from=build-hapi --chown=10014:10014 /tmp/hapi-fhir-jpaserver-starter/opentelemetry-javaagent.jar /app
 
 ENV ALLOW_EMPTY_PASSWORD=yes
 
