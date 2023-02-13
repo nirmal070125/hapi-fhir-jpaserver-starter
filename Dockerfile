@@ -24,8 +24,8 @@ RUN rm -rf /opt/bitnami/tomcat/webapps/ROOT && \
     mkdir -p /opt/bitnami/hapi/data/hapi/lucenefiles && \
     chmod 775 /opt/bitnami/hapi/data/hapi/lucenefiles
 
-USER 10020
-RUN mkdir -p /target && chown -R 10020:10020 target
+USER 10014
+RUN mkdir -p /target && chown -R 10014:10014 target
 USER 10014
 
 COPY --chown=10014:10014 catalina.properties /opt/bitnami/tomcat/conf/catalina.properties
@@ -40,7 +40,7 @@ FROM gcr.io/distroless/java17-debian11:nonroot as default
 # 65532 is the nonroot user's uid
 # used here instead of the name to allow Kubernetes to easily detect that the container
 # is running as a non-root (uid != 0) user.
-USER 10020:10020
+USER 10014:10014
 WORKDIR /app
 
 COPY --chown=nonroot:nonroot --from=build-distroless /app /app
