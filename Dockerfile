@@ -1,4 +1,6 @@
 FROM maven:3.8-openjdk-17-slim as build-hapi
+RUN useradd -r -u 10001 -g appuser appuser
+USER 10001
 WORKDIR /tmp/hapi-fhir-jpaserver-starter
 
 ARG OPENTELEMETRY_JAVA_AGENT_VERSION=1.17.0
@@ -20,12 +22,14 @@ RUN mkdir /app && cp /tmp/hapi-fhir-jpaserver-starter/target/ROOT.war /app/main.
 ########### it can be built using eg. `docker build --target tomcat .`
 FROM bitnami/tomcat:9.0 as tomcat
 
+RUN useradd -r -u 10001 -g appuser appuser
+USER 10001
+
 RUN rm -rf /opt/bitnami/tomcat/webapps/ROOT && \
     mkdir -p /opt/bitnami/hapi/data/hapi/lucenefiles && \
     chmod 775 /opt/bitnami/hapi/data/hapi/lucenefiles
 
-RUN useradd -r -u 10001 -g appuser appuser
-USER 10001
+
 RUN mkdir -p /target && chown -R 10001:10001 target
 
 
