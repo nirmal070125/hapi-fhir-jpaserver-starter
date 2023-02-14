@@ -41,6 +41,7 @@ FROM openjdk:18-alpine
 
 # https://security.alpinelinux.org/vuln/CVE-2022-37434
 RUN apk update && apk upgrade zlib
+RUN apk add libtasn1=4.18.0-r1
 
 USER 10014
 WORKDIR /app
