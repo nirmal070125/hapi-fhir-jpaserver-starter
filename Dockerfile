@@ -1,4 +1,4 @@
-FROM maven:3.8.5-eclipse-temurin-18-alpine as build-hapi
+FROM maven:3.8.5-eclipse-temurin-18-alpine as build-hapi 
 WORKDIR /tmp/hapi-fhir-jpaserver-starter
 
 ARG OPENTELEMETRY_JAVA_AGENT_VERSION=1.17.0
