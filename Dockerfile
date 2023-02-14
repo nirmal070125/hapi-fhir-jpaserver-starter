@@ -1,6 +1,4 @@
-FROM maven:3.8-openjdk-17-slim as build-hapi
-RUN useradd -r -u 10001 -g appuser appuser
-USER 10001
+FROM FROM maven:3.8.5-eclipse-temurin-18-alpine as build-hapi
 WORKDIR /tmp/hapi-fhir-jpaserver-starter
 
 ARG OPENTELEMETRY_JAVA_AGENT_VERSION=1.17.0
@@ -22,16 +20,14 @@ RUN mkdir /app && cp /tmp/hapi-fhir-jpaserver-starter/target/ROOT.war /app/main.
 ########### it can be built using eg. `docker build --target tomcat .`
 FROM bitnami/tomcat:9.0 as tomcat
 
-RUN useradd -r -u 10001 -g appuser appuser
-USER 10001
-
 RUN rm -rf /opt/bitnami/tomcat/webapps/ROOT && \
     mkdir -p /opt/bitnami/hapi/data/hapi/lucenefiles && \
     chmod 775 /opt/bitnami/hapi/data/hapi/lucenefiles
 
+RUN useradd -r -u 10001 -g appuser appuser
+USER 10001
 
 RUN mkdir -p /target && chown -R 10001:10001 target
-
 
 COPY --chown=10001:10001 catalina.properties /opt/bitnami/tomcat/conf/catalina.properties
 COPY --chown=10001:10001 server.xml /opt/bitnami/tomcat/conf/server.xml
@@ -41,15 +37,15 @@ COPY --from=build-hapi --chown=10001:10001 /tmp/hapi-fhir-jpaserver-starter/open
 ENV ALLOW_EMPTY_PASSWORD=yes
 
 ########### distroless brings focus on security and runs on plain spring boot - this is the default image
-FROM gcr.io/distroless/java17-debian11:nonroot as default
-# 65532 is the nonroot user's uid
-# used here instead of the name to allow Kubernetes to easily detect that the container
-# is running as a non-root (uid != 0) user.
-RUN useradd -r -u 10001 -g appuser appuser
-USER 10001:10001
+FROM openjdk:18-alpine
+
+# https://security.alpinelinux.org/vuln/CVE-2022-37434
+RUN apk update && apk upgrade zlib
+
+USER 10014
 WORKDIR /app
 
-COPY --chown=10001:10001 --from=build-distroless /app /app
-COPY --chown=10001:10001 --from=build-hapi /tmp/hapi-fhir-jpaserver-starter/opentelemetry-javaagent.jar /app
+COPY --chown=10014:10014 --from=build-distroless /app /app
+COPY --chown=10014:10014 --from=build-hapi /tmp/hapi-fhir-jpaserver-starter/opentelemetry-javaagent.jar /app
 
 CMD ["/app/main.war"]
